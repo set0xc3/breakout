@@ -1,6 +1,6 @@
-#include "framework_audio.h"
-#include "framework_log.h"
-#include "framework_string.h"
+#include <forge_audio.h>
+#include <forge_log.h>
+#include <forge_string.h>
 
 #include <string.h>
 
@@ -28,9 +28,9 @@ int main(int argc, char *argv[]) {
     log_info("file_ext: %s\n", (char *)file_ext.str);
     log_info("file_name_no_ext: %s\n", (char *)file_name_no_ext.str);
 
-    // str8_free(&file_dir);
+    str8_free(&file_dir);
     str8_free(&file_name);
-    // str8_free(&file_name_no_ext);
+    str8_free(&file_name_no_ext);
 
     log_info("Text: %d, Float: %f, String: %s\n", 1, 3.14, "Hello");
     log_warning("Text: %d, Float: %f, String: %s\n", 1, 3.14, "Hello");
@@ -38,10 +38,6 @@ int main(int argc, char *argv[]) {
 
     Audio_State *audio_state = audio_load("resources/audio/test.wav");
     audio_unload(audio_state);
-
-    start();
-    update(0.0);
-    stop();
 
     return 0;
 }
