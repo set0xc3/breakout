@@ -1,3 +1,4 @@
 [submodule "vendor/game-forge"]
 	path = vendor/game-forge
 	url = git@github.com:set0xc3/game-forge.git
+	branch = master
