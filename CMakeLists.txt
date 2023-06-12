@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(arkanoid)
+project(game)
 
 set(FORGE_DIR vendor/game-forge)
 
@@ -16,6 +16,7 @@ set(TARGET_ARCHITECTURE "x64")
 
 set(GAME_SOURCES
     ${PROJECT_SOURCE_DIR}/src/game.c
+    ${PROJECT_SOURCE_DIR}/src/level.c
     ${PROJECT_SOURCE_DIR}/src/main.c
 )
 
