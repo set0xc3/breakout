@@ -4,28 +4,34 @@
 #include <forge_base_types.h>
 #include <forge_gfx.h>
 #include <forge_vector2.h>
+#include <forge_vector3.h>
+#include <forge_vector4.h>
 
-#include "level.h"
+#include "entity.h"
+#include "forge_input.h"
+#include "forge_memory_arena.h"
 
 typedef enum GameState {
-    GAME_ACTIVE,
-    GAME_MENU,
-    GAME_WIN,
-    GAME_LOSE
+    GAME_STATE_ACTIVE,
+    GAME_STATE_MENU,
+    GAME_STATE_WIN,
+    GAME_STATE_LOSE
 } GameState;
 
 typedef struct Game {
+    MemoryArena *memory;
     GameState state;
-    Level *levels;
-    u64 level_count;
-    u64 level_index;
 
-    GFXState *gfx;
+    Entity *bricks;
+    u64 bricks_count;
+
+    Entity *player;
 } Game;
 
-void game_init(Game *game);
+void game_init(Game *game, MemoryArena *memory);
 void game_destroy(Game *game);
-void game_update(Game *game, f64 dt);
-void game_draw(Game *game);
+void game_update(Game *game, InputState *input, f64 dt);
+void game_draw(Game *game, GFXState *gfx);
+void game_add_brick(Game *game, Vector3 position, Vector2 size, Vector4 color);
 
 #endif // GAME_H
