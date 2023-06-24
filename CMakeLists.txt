@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.10)
 project(game)
 
-set(FORGE_DIR vendor/game-forge)
+set(FORGE_DIR vendor/forge)
 
-add_subdirectory(vendor/game-forge)
+add_subdirectory(vendor/forge)
 
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
