@@ -1,17 +1,16 @@
 #ifndef ENTITY_H
 #define ENTITY_H
 
-#include <forge_base_types.h>
-#include <forge_vector2.h>
-#include <forge_vector3.h>
-#include <forge_vector4.h>
+#include <forge/forge_api.h>
 
-typedef struct Entity {
-    Vector3 position;
-    Vector2 size;
-    Vector3 velocity;
-    Vector4 color;
-    void *texture;
+typedef struct Entity
+{
+    u64 id;
+    V3F position;
+    V2F size;
+    V3F velocity;
+    V4F color;
+    void   *texture;
 } Entity;
 
 #endif // ENTITY_H

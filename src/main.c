@@ -1,38 +1,108 @@
-#include <forge.h>
-#include <forge_base_types.h>
-#include <forge_gfx.h>
-#include <forge_memory_arena.h>
-#include <stdlib.h>
+#include <forge/forge_api.h>
 
 #include "game.h"
 
-int main(int argc, char *argv[]) {
-    b32 is_quit = false;
-    gfx_init();
-    gfx_window_set_title("breakout");
-    // gfx_window_set_size(v2(800, 600));
+int
+thread_logic_update(void *data)
+{
+    printf("thread_logic_update:\n");
 
-    MemoryArena *game_memory = arena_create(Megabytes(64));
-    Game *game = arena_push_zero(game_memory, sizeof(Game));
-    game_init(game, game_memory);
+    const f64 fps_max = 60.0;
+    const f64 period_max = 1.0 / fps_max;
+    const f64 perf_frequency = (f64)forge_perf_frequency();
 
-    while (!is_quit) {
-        if (!gfx_update()) {
-            is_quit = true;
+    f64 time = 0.0;
+    f64 begin_counter = 0.0;
+    f64 end_counter = 0.0;
+    while (!gfx_quit_is())
+    {
+        begin_counter = (f64)forge_perf_counter();
+
+        f64 counter_elapsed = (f64)(begin_counter - end_counter);
+        f64 dt = (f64)(counter_elapsed / perf_frequency);
+        f64 fps = (f64)(perf_frequency / counter_elapsed);
+
+        if (dt > period_max)
+        {
+            if (dt > 1.0)
+            {
+                dt = period_max;
+            }
+
+            gfx_update();
+            game_update(dt);
+
+            end_counter = begin_counter;
+            time += dt;
         }
 
-        // Update logic
-        game_update(game, 0.0);
+        forge_sleep((u32)dt);
+    }
 
-        // Renderer
-        gfx_begin();
-        game_draw(game);
-        gfx_end();
+    return 0;
+}
 
+int
+thread_draw_update(void *data)
+{
+    printf("thread_draw_update:\n");
+    while (!gfx_quit_is())
+    {
         forge_sleep(1);
     }
 
-    game_destroy(game);
+    return 0;
+}
+
+int
+main(int argc, char *argv[])
+{
+    gfx_init();
+    gfx_window_title_set("breakout");
+    // gfx_window_set_size(v2(800, 600));
+
+    game_init();
+
+    {
+        SDL_Thread *logic
+            = SDL_CreateThread(thread_logic_update, "logic", NULL);
+    }
+
+    const f64 fps_max = 60.0;
+    const f64 period_max = 1.0 / fps_max;
+    const f64 perf_frequency = (f64)forge_perf_frequency();
+
+    f64 time = 0.0;
+    f64 begin_counter = 0.0;
+    f64 end_counter = 0.0;
+    while (!gfx_quit_is())
+    {
+        begin_counter = (f64)forge_perf_counter();
+
+        f64 counter_elapsed = (f64)(begin_counter - end_counter);
+        f64 dt = (f64)(counter_elapsed / perf_frequency);
+        f64 fps = (f64)(perf_frequency / counter_elapsed);
+
+        if (dt >= period_max)
+        {
+            if (dt >= 1.0)
+            {
+                dt = period_max;
+            }
+
+            // Renderer
+            gfx_begin();
+            game_draw();
+            gfx_end();
+
+            end_counter = begin_counter;
+            time += dt;
+        }
+
+        forge_sleep((u32)dt);
+    }
+
+    game_destroy();
 
     return 0;
 }

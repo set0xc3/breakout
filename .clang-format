@@ -1,3 +1,6 @@
 ---
-BasedOnStyle: LLVM
+BasedOnStyle: GNU
 IndentWidth: 4
+AlignConsecutiveDeclarations: true
+SpaceBeforeParens: ControlStatements
+BreakBeforeBraces: Allman

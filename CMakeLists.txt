@@ -17,7 +17,7 @@ set(TARGET_ARCHITECTURE "x64")
 set(GAME_SOURCES
     ${PROJECT_SOURCE_DIR}/src/game.c
     ${PROJECT_SOURCE_DIR}/src/main.c
-    ${PROJECT_SOURCE_DIR}/src/player.c
+    ${PROJECT_SOURCE_DIR}/src/scene.c
 )
 
 add_executable(${PROJECT_NAME}
