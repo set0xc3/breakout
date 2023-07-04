@@ -51,18 +51,20 @@ game_destroy(void)
 void
 game_update(f64 dt)
 {
+    PROFILER_BEGIN(game_update);
+
     if (input_key_up(KEY_CODE_ESCAPE))
     {
         local_variable b32 is_pause = false;
         is_pause = !is_pause;
-        g_this->state = is_pause ? GAME_STATE_PAUSE : GAME_STATE_ACTIVE;
+        g_this->state = is_pause ? GameState_Pause : GameState_Active;
 
         log_info("Key:ESC\n");
     }
 
     switch (g_this->state)
     {
-    case GAME_STATE_ACTIVE:
+    case GameState_Active:
     {
         const f32 speed = 400.0f;
         if (input_key_pressed(KEY_CODE_A))
@@ -78,11 +80,15 @@ game_update(f64 dt)
     default:
         break;
     }
+
+    PROFILER_END(game_update);
 }
 
 void
 game_draw(void)
 {
+    PROFILER_BEGIN(game_draw);
+
     V2F viewport_position = v2f(0.0f, 0.0f);
     V2F viewport_padding = v2f(0.0f, 0.0f);
     V2F viewport_size
@@ -93,7 +99,7 @@ game_draw(void)
 
     switch (g_this->state)
     {
-    case GAME_STATE_ACTIVE:
+    case GameState_Active:
     {
         for (u32 index = 0; index < scene_entity_get_count(); index += 1)
         {
@@ -105,4 +111,6 @@ game_draw(void)
     default:
         break;
     }
+
+    PROFILER_END(game_draw);
 }
