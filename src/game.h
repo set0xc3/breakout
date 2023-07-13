@@ -17,17 +17,28 @@ typedef enum
 
 typedef struct
 {
+    Entity *base;
+    f32     radius;
+    b32     stuck;
+} Ball;
+
+typedef struct
+{
     MemoryArena *permanent_memory;
     MemoryArena *temporary_memory;
 
     GameState state;
     V4F       viewport;
     Entity   *player;
+    Ball     *ball;
 } Game;
 
 void game_init(void);
 void game_destroy(void);
 void game_update(f64 dt);
 void game_draw(void);
+
+void game_ball_move(f32 dt, V4F viewport);
+void game_reset(void);
 
 #endif // GAME_H

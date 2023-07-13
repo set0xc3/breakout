@@ -37,9 +37,21 @@ game_init(void)
     player_position.x = (g_this->viewport.width / 2) - player_size.width / 2;
     player_position.y = g_this->viewport.height - player_size.height;
 
-    g_this->player = scene_create_entity();
+    g_this->player = scene_entity_create();
     g_this->player->position = player_position;
     g_this->player->size = player_size;
+
+    V3F ball_position = { 0 };
+    V2F ball_size = v2f(24.0f, 24.0f);
+    ball_position.x = (g_this->viewport.width / 2) - ball_size.width / 2;
+    ball_position.y = g_this->viewport.height - player_size.y * 2;
+
+    g_this->ball = calloc(sizeof(Ball), 1);
+    g_this->ball->base = scene_entity_create();
+    g_this->ball->base->position = ball_position;
+    g_this->ball->base->size = ball_size;
+    g_this->ball->base->velocity = v3f(0.0f, -350.0f, 0.0f);
+    g_this->ball->stuck = true;
 }
 
 void
@@ -51,7 +63,8 @@ game_destroy(void)
 void
 game_update(f64 dt)
 {
-    PROFILER_BEGIN(game_update);
+    g_this->viewport.width = gfx_window_size_get().width;
+    g_this->viewport.height = gfx_window_size_get().height;
 
     if (input_key_up(KEY_CODE_ESCAPE))
     {
@@ -66,29 +79,53 @@ game_update(f64 dt)
     {
     case GameState_Active:
     {
-        const f32 speed = 400.0f;
+        const f32 velocity = 400.0f * dt;
         if (input_key_pressed(KEY_CODE_A))
         {
-            g_this->player->position.x -= speed * dt;
+            if (g_this->player->position.x >= 0.0f)
+            {
+                g_this->player->position.x -= velocity;
+                if (g_this->ball->stuck)
+                {
+                    g_this->ball->base->position.x -= velocity;
+                    g_this->ball->base->velocity.x = -400.0f;
+                }
+            }
         }
         if (input_key_pressed(KEY_CODE_D))
         {
-            g_this->player->position.x += speed * dt;
+            if (g_this->player->position.x
+                <= g_this->viewport.width - g_this->player->size.width)
+            {
+                g_this->player->position.x += velocity;
+                if (g_this->ball->stuck)
+                {
+                    g_this->ball->base->position.x += velocity;
+                    g_this->ball->base->velocity.x = 400.0f;
+                }
+            }
         }
+
+        if (input_key_pressed(KEY_CODE_Q))
+        {
+            game_reset();
+        }
+        if (input_key_pressed(KEY_CODE_E))
+        {
+            g_this->ball->stuck = false;
+        }
+
+        game_ball_move(dt, g_this->viewport);
     }
     break;
     default:
         break;
     }
-
-    PROFILER_END(game_update);
 }
 
 void
 game_draw(void)
 {
-    PROFILER_BEGIN(game_draw);
-
     V2F viewport_position = v2f(0.0f, 0.0f);
     V2F viewport_padding = v2f(0.0f, 0.0f);
     V2F viewport_size
@@ -111,6 +148,60 @@ game_draw(void)
     default:
         break;
     }
+}
 
-    PROFILER_END(game_draw);
+void
+game_ball_move(f32 dt, V4F viewport)
+{
+    if (!g_this->ball->stuck)
+    {
+        // move the ball
+        g_this->ball->base->position
+            = v3f_add(g_this->ball->base->position,
+                      v3f_mulf(g_this->ball->base->velocity, dt));
+
+        // check if outside window bounds; if so, reverse velocity and restore
+        // at correct position
+        if (g_this->ball->base->position.x <= 0.0f)
+        {
+            g_this->ball->base->velocity.x = -g_this->ball->base->velocity.x;
+            g_this->ball->base->position.x = 0.0f;
+        }
+        else if (g_this->ball->base->position.x + g_this->ball->base->size.x
+                 >= viewport.width)
+        {
+            g_this->ball->base->velocity.x = -g_this->ball->base->velocity.x;
+            g_this->ball->base->position.x
+                = viewport.width - g_this->ball->base->size.x;
+        }
+        if (g_this->ball->base->position.y <= 0.0f)
+        {
+            g_this->ball->base->velocity.y = -g_this->ball->base->velocity.y;
+            g_this->ball->base->position.y = 0.0f;
+        }
+        else if (g_this->ball->base->position.y >= viewport.height)
+        {
+            game_reset();
+        }
+    }
+}
+
+void
+game_reset(void)
+{
+    V3F player_position = { 0 };
+    V2F player_size = v2f(256.0f, 32.0f);
+    player_position.x = (g_this->viewport.width / 2) - player_size.width / 2;
+    player_position.y = g_this->viewport.height - player_size.height;
+    g_this->player->position = player_position;
+    g_this->player->size = player_size;
+
+    V3F ball_position = { 0 };
+    V2F ball_size = v2f(24.0f, 24.0f);
+    ball_position.x = (g_this->viewport.width / 2) - ball_size.width / 2;
+    ball_position.y = g_this->viewport.height - player_size.y * 2;
+    g_this->ball->base->position = ball_position;
+    g_this->ball->base->size = ball_size;
+    g_this->ball->base->velocity = v3f(0.0f, -350.0f, 0.0f);
+    g_this->ball->stuck = true;
 }

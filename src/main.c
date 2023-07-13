@@ -5,7 +5,6 @@
 int
 main(int argc, char *argv[])
 {
-
     gfx_init();
     gfx_window_title_set("breakout");
     gfx_window_size_set(v2f(800, 600));
@@ -20,7 +19,7 @@ main(int argc, char *argv[])
     f64 time = 0.0;
     f64 begin_counter = 0.0;
     f64 end_counter = 0.0;
-    while (!gfx_quit_is())
+    while (!gfx_should_close())
     {
         begin_counter = (f64)forge_perf_counter();
 
@@ -28,6 +27,7 @@ main(int argc, char *argv[])
         f64 dt = (f64)(counter_elapsed / perf_frequency);
         f64 fps = (f64)(perf_frequency / counter_elapsed);
 
+        gfx_event_poll();
         if (dt >= period_max)
         {
             if (dt >= 1.0)
@@ -38,7 +38,6 @@ main(int argc, char *argv[])
             gfx_update();
             game_update(dt);
 
-            // Renderer
             gfx_begin();
             game_draw();
             gfx_end();
@@ -46,7 +45,7 @@ main(int argc, char *argv[])
             end_counter = begin_counter;
             time += dt;
 
-            log_info("fps: %d\n", (u32)fps + 1);
+            // log_info("fps: %d\n", (u32)fps + 1);
         }
 
         debug_profiler_handle();

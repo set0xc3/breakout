@@ -18,6 +18,11 @@ scene_init(void)
 }
 
 void
+scene_update(void)
+{
+}
+
+void
 scene_destroy(void)
 {
     free(g_this->entity_list);
@@ -25,25 +30,28 @@ scene_destroy(void)
 }
 
 Entity *
-scene_create_entity(void)
+scene_entity_create(void)
 {
+    Entity *result = NULL;
+
     if (g_this->entity_count + 1 > ENTITY_CAPACITY)
     {
         log_error("Failed create entity\n");
-        return NULL;
+        return result;
     }
 
-    Entity *result = g_this->entity_list + g_this->entity_count;
+    result = (Entity *)g_this->entity_list + g_this->entity_count;
     result->id = g_this->entity_count + 1;
     result->color = v4f(255.0f, 0.0f, 255.0f, 255.0f);
     result->size = v2f(100.0f, 100.0f);
+
     g_this->entity_count++;
 
     return result;
 }
 
 void
-scene_destroy_entity(Entity *entity)
+scene_entity_remove(Entity *entity)
 {
     if (g_this->entity_count - 1 < 0)
     {

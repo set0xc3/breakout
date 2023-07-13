@@ -6,9 +6,10 @@
 #include "entity.h"
 
 void    scene_init(void);
+void    scene_update(void);
 void    scene_destroy(void);
-Entity *scene_create_entity(void);
-void    scene_destroy_entity(Entity *entity);
+Entity *scene_entity_create(void);
+void    scene_entity_destroy(Entity *entity);
 u32     scene_entity_get_count(void);
 Entity *scene_entity_get_by_index(u32 index);
 

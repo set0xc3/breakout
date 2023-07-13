@@ -5,12 +5,12 @@
 
 typedef struct Entity
 {
-    u64 id;
-    V3F position;
-    V2F size;
-    V3F velocity;
-    V4F color;
-    void   *texture;
+    u64   id;
+    V3F   position;
+    V2F   size;
+    V3F   velocity;
+    V4F   color;
+    void *texture;
 } Entity;
 
 #endif // ENTITY_H
