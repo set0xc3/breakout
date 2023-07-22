@@ -66,7 +66,7 @@ game_update(f64 dt)
     g_this->viewport.width = gfx_window_size_get().width;
     g_this->viewport.height = gfx_window_size_get().height;
 
-    if (input_key_up(KEY_CODE_ESCAPE))
+    if (input_key_up(KeyCode_Escape))
     {
         local_variable b32 is_pause = false;
         is_pause = !is_pause;
@@ -80,7 +80,7 @@ game_update(f64 dt)
     case GameState_Active:
     {
         const f32 velocity = 400.0f * dt;
-        if (input_key_pressed(KEY_CODE_A))
+        if (input_key_pressed(KeyCode_A))
         {
             if (g_this->player->position.x >= 0.0f)
             {
@@ -92,7 +92,7 @@ game_update(f64 dt)
                 }
             }
         }
-        if (input_key_pressed(KEY_CODE_D))
+        if (input_key_pressed(KeyCode_D))
         {
             if (g_this->player->position.x
                 <= g_this->viewport.width - g_this->player->size.width)
@@ -106,11 +106,11 @@ game_update(f64 dt)
             }
         }
 
-        if (input_key_pressed(KEY_CODE_Q))
+        if (input_key_pressed(KeyCode_Q))
         {
             game_reset();
         }
-        if (input_key_pressed(KEY_CODE_E))
+        if (input_key_pressed(KeyCode_E))
         {
             g_this->ball->stuck = false;
         }
